@@ -1,6 +1,6 @@
 --[[
 Name: AceLocale-2.0
-Revision: $Rev: 11577 $
+Revision: $Rev: 17638 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Inspired By: Ace 1.x by Turan (turan@gryphon.com)
 Website: http://www.wowace.com/
@@ -12,10 +12,12 @@ Dependencies: AceLibrary
 ]]
 
 local MAJOR_VERSION = "AceLocale-2.0"
-local MINOR_VERSION = "$Revision: 11577 $"
+local MINOR_VERSION = "$Revision: 17638 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
+
+if loadstring("return function(...) return ... end") and AceLibrary:HasInstance(MAJOR_VERSION) then return end -- lua51 check
 
 local AceLocale = {}
 
@@ -382,7 +384,7 @@ function AceLocale.prototype:Debug()
 		return
 	end
 	local words = {}
-	local locales = {"enUS", "deDE", "frFR", "koKR", "zhCN", "zhTW"}
+	local locales = {"enUS", "ruRU", "deDE", "frFR", "koKR", "zhCN", "zhTW"}
 	local localizations = {}
 	DEFAULT_CHAT_FRAME:AddMessage("--- AceLocale Debug ---")
 	for _,locale in ipairs(locales) do

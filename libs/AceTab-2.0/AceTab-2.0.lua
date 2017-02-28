@@ -1,25 +1,27 @@
 --[[
 Name: AceTab-2.0
-Revision: $Rev: 11577 $
+Revision: $Rev: 17638 $
 Developed by: The Ace Development Team (http://www.wowace.com/index.php/The_Ace_Development_Team)
 Website: http://www.wowace.com/
 Documentation: http://www..wowace.com/index.php/AceTab-2.0
 SVN: http://svn.wowace.com/root/trunk/Ace2/AceTab-2.0
 Description: A tab-completion library
-Dependencies: AceLibrary
+Dependencies: AceLibrary, AceEvent-2.0
 ]]
 
 local MAJOR_VERSION = "AceTab-2.0"
-local MINOR_VERSION = "$Revision: 11577 $"
+local MINOR_VERSION = "$Revision: 17638 $"
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary.") end
 if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
 
-local AceHook, AceEvent
+if loadstring("return function(...) return ... end") and AceLibrary:HasInstance(MAJOR_VERSION) then return end -- lua51 check
+local AceEvent
 local AceTab = {}
 local _G = getfenv()
 
 local hookedFrames = {}
+local framesHooked = {}
 
 function AceTab:RegisterTabCompletion(descriptor, regex, wlfunc, usage, editframes)
 	self:argCheck(descriptor, 2, "string")
@@ -61,11 +63,22 @@ function AceTab:RegisterTabCompletion(descriptor, regex, wlfunc, usage, editfram
 				self:error("Cannot register frame %q; it is not an EditBox", frame)
 				frame = nil
 			else
-				if AceEvent:IsFullyInitialized() and not self:IsHooked(Gframe, "OnTabPressed") then
-					self:HookScript(Gframe, "OnTabPressed")
-					Gframe.curMatch = 0
-					Gframe.matches = {}
-					Gframe.pMatchLen = 0
+				if AceEvent and AceEvent:IsFullyInitialized() then
+					if not framesHooked[Gframe] then
+						framesHooked[Gframe] = true
+						local orig = Gframe:GetScript("OnTabPressed")
+						if type(orig) ~= "function" then
+							orig = function() end
+						end
+						Gframe:SetScript("OnTabPressed", function()
+							if self:OnTabPressed(Gframe) then
+								return orig()
+							end
+						end)
+						Gframe.curMatch = 0
+						Gframe.matches = {}
+						Gframe.pMatchLen = 0
+					end
 				else
 					hookedFrames[frame] = true
 				end
@@ -82,7 +95,7 @@ function AceTab:RegisterTabCompletion(descriptor, regex, wlfunc, usage, editfram
 	end
 	self.registry[descriptor][self] = {patterns = regex, wlfunc = wlfunc,  usage = usage, frames = editframes}
 	
-
+	
 	if not AceEvent and AceLibrary:HasInstance("AceEvent-2.0") then
 		external(AceTab, "AceEvent-2.0", AceLibrary("AceEvent-2.0"))
 	end
@@ -150,8 +163,11 @@ end
 
 function AceTab:OnTabPressed()
 	local ost = this:GetScript("OnTextSet")
+	if type(ost) ~= "function" then
+		ost = nil
+	end
 	if ost then this:SetScript("OnTextSet", nil) end
-	if this:GetText() == "" then return self.hooks[this].OnTabPressed.orig() end
+	if this:GetText() == "" then return true end
 	this:Insert("\255")
 	pos = string.find(this:GetText(), "\255", 1) - 1
 	this:HighlightText(pos, pos+1)
@@ -162,7 +178,7 @@ function AceTab:OnTabPressed()
 
 	local left = string.find(string.sub(text, 1, pos), "%w+$")
 	left = left and left-1 or pos
-	if not left or left == 1 and string.sub(text, 1, 1) == "/" then return self.hooks[this].OnTabPressed.orig() end
+	if not left or left == 1 and string.sub(text, 1, 1) == "/" then return true end
 
 	local _, _, word = string.find(string.sub(text, left, pos), "(%w+)")
 	word = word or ""
@@ -182,7 +198,7 @@ function AceTab:OnTabPressed()
 	
 	for desc, entry in pairs(AceTab.registry) do
 		for _, s in pairs(entry) do
-			for _, f in s.frames do
+			for _, f in pairs(s.frames) do
 				if _G[f] == this then
 					for _, regex in ipairs(s.patterns) do
 						local cands = {}
@@ -215,7 +231,7 @@ function AceTab:OnTabPressed()
 	end
 
 	local _, set = next(this.matches)
-	if not set or numMatches == 0 and not hasNonFallback then return self.hooks[this].OnTabPressed.orig() end
+	if not set or numMatches == 0 and not hasNonFallback then return true end
 	
 	this:HighlightText(left, left + string.len(word))
 	if numMatches == 1 then
@@ -265,20 +281,27 @@ end
 
 function AceTab:AceEvent_FullyInitialized()
 	for frame in pairs(hookedFrames) do
-		self:HookScript(_G[frame], "OnTabPressed")
-		_G[frame].curMatch = 0
-		_G[frame].matches = {}
-		_G[frame].pMatchLen = 0
+		local Gframe = _G[frame]
+		if not framesHooked[Gframe] then
+			framesHooked[Gframe] = true
+			local orig = Gframe:GetScript("OnTabPressed")
+			if type(orig) ~= "function" then
+				orig = function() end
+			end
+			Gframe:SetScript("OnTabPressed", function()
+				if self:OnTabPressed(Gframe) then
+					return orig()
+				end
+			end)
+			Gframe.curMatch = 0
+			Gframe.matches = {}
+			Gframe.pMatchLen = 0
+		end
 	end
 end
 
 local function external(self, major, instance)
-	if major == "AceHook-2.0" then
-		if not AceHook then
-			AceHook = instance
-			AceHook:embed(self)
-		end
-	elseif major == "AceEvent-2.0" then
+	if major == "AceEvent-2.0" then
 		if not AceEvent then
 			AceEvent = instance
 			
