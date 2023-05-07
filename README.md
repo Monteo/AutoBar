@@ -1,7 +1,9 @@
 # AutoBar
--- added Goblins and High Elf
--- added Turtles waters and foods
--- Vanilla standalone moved to Vanilla-1.12.1 branch
+
+###### Changes
+*  added Goblins and High Elf
+* added Turtles waters and foods
+* Vanilla standalone moved to Vanilla-1.12.1 branch
 
 1.12.06.12 beta WoW Vanilla AddOn
 
