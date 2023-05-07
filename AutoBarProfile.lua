@@ -98,6 +98,10 @@ function AutoBarProfile.InitializeBasic()
 		AutoBarProfile.basic[MOUNTSLOT] = { "MOUNTS_HUMAN", "MOUNTS_NIGHTELF", "MOUNTS_GNOME", "MOUNTS_DWARF", "MOUNTS_SPECIAL", "MOUNTS_QIRAJI" };
 	elseif (raceEnglish == "Gnome") then
 		AutoBarProfile.basic[MOUNTSLOT] = { "MOUNTS_HUMAN", "MOUNTS_NIGHTELF", "MOUNTS_DWARF", "MOUNTS_GNOME", "MOUNTS_SPECIAL", "MOUNTS_QIRAJI" };
+	elseif (raceEnglish == "Goblin") then
+		AutoBarProfile.basic[MOUNTSLOT] = { "MOUNTS_ORC", "MOUNTS_UNDEAD", "MOUNTS_TAUREN", "MOUNTS_TROLL", "MOUNTS_SPECIAL", "MOUNTS_QIRAJI" };
+	elseif (raceEnglish == "BloodElf") then
+		AutoBarProfile.basic[MOUNTSLOT] = { "MOUNTS_HUMAN", "MOUNTS_NIGHTELF", "MOUNTS_DWARF", "MOUNTS_GNOME", "MOUNTS_SPECIAL", "MOUNTS_QIRAJI" };
 	end
 	AutoBarProfile.basic[MOUNTSLOT].arrangeOnUse = true;
 end

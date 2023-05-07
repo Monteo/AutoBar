@@ -758,6 +758,7 @@ AutoBar_Category_Info["BANDAGES"].items = {
 		8545,	-- Heavy Mageweave Bandage
 		14529,	-- Runecloth Bandage
 		14530,	-- Heavy Runecloth Bandage
+		23684,  -- Crystal Infused Bandage
 };
 AutoBar_Category_Info["HEALPOTIONS"].items = {
 		118,	-- Minor Healing Potion
@@ -811,6 +812,9 @@ AutoBar_Category_Info["WATER"].items = {
 		1645,		-- Moonberry Juice				35 - 1992
 		8766,		-- Morning Glory Dew			45 - 2934
 		23161,		-- Freshly-Squeezed Lemonade	45 - 2934
+		--Turtle WoW Water--
+		80167, 		-- Kaja'Cola 				-- Goblin Starting Water
+		80250, 		-- Sun-Parched Waterskin	-- High Elf Starting Water
 };
 AutoBar_Category_Info["WATER_SPIRIT"].items = {
 		13813,	-- Blessed Sunfruit Juice		45 - 4410   10
@@ -957,6 +961,9 @@ AutoBar_Category_Info["FOOD"].items = {
 		13935,	-- Baked Salmon				-- Cooking - Level 45, heals 2148
 		13933,	-- Lobster Stew				-- Cooking - Level 45, heals 2148
 		23160,	-- Friendship Bread			-- Vendor  - Level 45, heals 2148
+		--Turtle WoW Food--
+		80168,	-- Crunchy Murloc Fine		-- Goblin Starting Food
+		80251, 	-- Crusty Flatbread			-- High Elf Starting Food
 };
 AutoBar_Category_Info["FOOD_PET_BREAD"].items = {
 		5349,	-- Conjured Muffin						heals 61
